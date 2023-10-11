@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+  probot-db:
+    image: postgres:13
+    restart: always
+    volumes:
+      - ${PWD}/.probot/database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=probot
+      - POSTGRES_PASSWORD=probot
+  probot-builder:
+    image: baptistearno/probot-builder:latest
+    restart: always
+    depends_on:
+      - probot-db
+    ports:
+      - '8080:3000'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    env_file: .env
+  probot-viewer:
+    image: baptistearno/probot-viewer:latest
+    restart: always
+    ports:
+      - '8081:3000'
+    env_file: .env
